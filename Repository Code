@@ -1,0 +1,147 @@
+//Written by Dennis Tenchavez and Arijit Chakma
+
+#include <FastLED.h>
+#include <SoftwareSerial.h>
+#define NUM_LEDS 144   //The number of LED's in the strip
+#define DATA_PIN 9    //LED strips are connected to this pin
+#define CLOCK_PIN 13
+
+SoftwareSerial BTserial (2,3); //RX and TX
+CRGB leds[NUM_LEDS];
+
+char t;   
+int pinL1 = 8;    //pin number for left motors
+int pinL2 = 7;
+int pinR1 = 6;    //pin number for right motors
+int pinR2 = 5;
+
+int pinA1 = 10;    //Green LED for forward motion
+int pinA2 = 11;    //Red LED for reverse motion
+int pinB1 = 12;
+int pinB2 = 13;
+
+void setup(){
+  BTserial.begin(9600);
+
+  pinMode (pinL1, OUTPUT);     // Left motors are initialized
+  pinMode (pinL2, OUTPUT);
+
+  pinMode (pinR1, OUTPUT);     //Right motors are initialized
+  pinMode (pinR2, OUTPUT);
+
+  pinMode (pinA1, OUTPUT);    //LED's are initialized 
+  pinMode (pinA2, OUTPUT);
+  pinMode (pinB1, OUTPUT);
+  pinMode (pinB2, OUTPUT);
+  pinMode (A0, INPUT);
+  
+  FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);
+
+  for (int i=0; i<=NUM_LEDS; i++)   //Turn all LED's off
+  {
+    leds[i] = CRGB::Black;
+  }
+  FastLED.show();   //LED strips are updated
+}
+  
+  void loop(){
+    int sens = 500;   //The sensitivity can be changed ranging from 0 to 1023
+
+    int data = analogRead(A0);
+
+    if(data>sens)
+    {
+      data = sens;
+    }
+
+  int val_1 = map(data, 0, sens+1, 0, NUM_LEDS);    //different values that can be used for sensitivity
+  int val_2 = map(data, 0, sens+1, 0, 255);
+  int val_3 = map(data, 0, sens+1, 0, NUM_LEDS/2);
+
+  BrightnessReactive(val_2);
+ 
+  FastLED.show();
+
+ if (BTserial.available())
+    {  
+        t = BTserial.read();
+    }
+  if (t == 'F'){    //All the buttons on the app are assigned to arduino
+    forward(100);   
+      }
+  else if (t == 'B'){
+    reverse(100);
+     }
+  else if(t=='R'){
+    right(50);
+     }
+  else if ( t == 'L'){
+    left(50);
+      }
+  else if (t == 'A'){
+    stopcar();
+      }
+  delay (100);
+}
+
+void BrightnessReactive(int val){
+  int hue = 0;
+  for(int i=0; i<=NUM_LEDS; i++)
+  {
+  leds[i] = CHSV(hue+=2,255,val);
+  }
+}
+
+void forward(int a){    //moves the car forward
+  digitalWrite (pinB1, HIGH);
+  digitalWrite (pinB2, HIGH);
+  digitalWrite (pinA1, LOW);
+  digitalWrite (pinA2, LOW);
+  digitalWrite (pinL1, HIGH);
+  digitalWrite (pinL2, LOW);
+  digitalWrite (pinR1, HIGH);
+  digitalWrite (pinR2, LOW);
+
+  }
+
+void reverse(int b){    //Reverses the car
+  digitalWrite (pinB1, LOW);
+  digitalWrite (pinB2, LOW);
+  digitalWrite (pinA1, HIGH);
+  digitalWrite (pinA2, HIGH);
+  digitalWrite (pinL1, LOW);
+  digitalWrite (pinL2, HIGH);
+  digitalWrite (pinR1, LOW);
+  digitalWrite (pinR2, HIGH);
+
+  
+}
+
+void right(int c){    //Turns the car right
+  digitalWrite (pinR1, HIGH);
+  digitalWrite (pinR2, LOW);
+  digitalWrite (pinL1, LOW);
+  digitalWrite (pinL2, HIGH);
+
+  
+}
+
+void left(int d){   //turns the car left
+  digitalWrite (pinR1, LOW);
+  digitalWrite (pinR2, HIGH);
+  digitalWrite (pinL1, HIGH);
+  digitalWrite (pinL2, LOW);
+
+  
+}
+
+void stopcar(){   //Stops the car
+  digitalWrite (pinA1, LOW);
+  digitalWrite (pinA2, LOW);
+  digitalWrite (pinB1, LOW);
+  digitalWrite (pinB2, LOW);
+  digitalWrite (pinL1, LOW);
+  digitalWrite (pinL2, LOW);
+  digitalWrite (pinR1, LOW);
+  digitalWrite (pinR2, LOW);
+}
