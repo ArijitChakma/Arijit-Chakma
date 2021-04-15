@@ -4,6 +4,7 @@ Table of Contents:
   1. Link to t he presentation video
   2. Summary
   3. Matterials Used 
+  4. Credits
 
 The link to the presentation video:
 https://www.youtube.com/watch?v=H4YrxH688xo
@@ -24,6 +25,9 @@ Materials Used:
   9. A 5x8 piece of plywood used as the main base. (Bought from local Lowes)
   10. wireless speaker for better sound sesnsitivit. (Had it in the stash at home)
   11. 6- AA batteries and 2- 9V batteries with snappers. (Bought them from "The Source"- local store)
+
+Credits:
+https://create.arduino.cc/projecthub/TayfMavi/arduino-bluetooth-car-control-177898?ref=platform&ref_id=424_trending__beginner_&offset=56
   
   
   
